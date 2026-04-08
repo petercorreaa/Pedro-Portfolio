@@ -2,26 +2,215 @@
 @tailwind components;
 @tailwind utilities;
 
+/* ── Design tokens ─────────────────────────────────────────── */
 :root {
-  --background: #000000;
-  --foreground: #ffffff;
+  --bg-primary:       #0d0907;
+  --text-primary:     #f7f5f1;
+  --accent:           #4dd9c0;
+
+  /* Section endpoint colors */
+  --color-branding:   #1a4d2e;
+  --color-visual:     #7a2e0e;
+  --color-social:     #1e3a5f;
+  --color-uxui:       #3b1f6b;
+
+  /* Section gradients (vertical) */
+  --gradient-branding: linear-gradient(to bottom, #0d0907, #1a4d2e);
+  --gradient-visual:   linear-gradient(to bottom, #0d0907, #7a2e0e);
+  --gradient-social:   linear-gradient(to bottom, #0d0907, #1e3a5f);
+  --gradient-uxui:     linear-gradient(to bottom, #0d0907, #3b1f6b);
 }
 
-body {
-  color: var(--foreground);
-  background: var(--background);
-  font-family: Arial, Helvetica, sans-serif;
+/* ── Base ──────────────────────────────────────────────────── */
+@layer base {
+  html {
+    scroll-behavior: smooth;
+  }
+
+  body {
+    background-color: var(--bg-primary);
+    color: var(--text-primary);
+    font-family: var(--font-inter), system-ui, sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  ::selection {
+    background-color: var(--accent);
+    color: var(--bg-primary);
+  }
+
+  /* Custom scrollbar */
+  ::-webkit-scrollbar {
+    width: 6px;
+  }
+  ::-webkit-scrollbar-track {
+    background: var(--bg-primary);
+  }
+  ::-webkit-scrollbar-thumb {
+    background: var(--accent);
+    border-radius: 9999px;
+  }
+  ::-webkit-scrollbar-thumb:hover {
+    background: color-mix(in srgb, var(--accent) 80%, white);
+  }
 }
 
+/* ── Navbar link: slide-in underline ───────────────────────── */
+@layer components {
+  .nav-link {
+    position: relative;
+    display: inline-block;
+    font-size: 0.75rem;           /* 12px */
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--text-primary);
+    transition: color 0.25s ease;
+  }
+
+  .nav-link::after {
+    content: "";
+    position: absolute;
+    bottom: -2px;
+    left: 0;
+    width: 100%;
+    height: 1px;
+    background-color: var(--accent);
+    transform: scaleX(0);
+    transform-origin: left center;
+    transition: transform 0.25s ease;
+  }
+
+  .nav-link:hover,
+  .nav-link--active {
+    color: var(--accent);
+  }
+
+  .nav-link:hover::after,
+  .nav-link--active::after {
+    transform: scaleX(1);
+  }
+}
+
+/* ── Keyframes ─────────────────────────────────────────────── */
+@keyframes float {
+  0%, 100% { transform: translateY(0px);   }
+  50%       { transform: translateY(-14px); }
+}
+
+@keyframes mesh-drift {
+  0%   { transform: translate(0%,   0%)   scale(1);    }
+  33%  { transform: translate(3%,  -4%)   scale(1.04); }
+  66%  { transform: translate(-2%,  3%)   scale(0.97); }
+  100% { transform: translate(0%,   0%)   scale(1);    }
+}
+
+@keyframes glow-pulse {
+  0%, 100% { box-shadow: 0 0 0 3px rgba(77, 217, 192, 0.35),
+                         0 0 32px 8px rgba(77, 217, 192, 0.12); }
+  50%       { box-shadow: 0 0 0 4px rgba(77, 217, 192, 0.55),
+                         0 0 56px 16px rgba(77, 217, 192, 0.22); }
+}
+
+@keyframes chevron-bounce {
+  0%, 100% { transform: translateY(0);   opacity: 0.4; }
+  50%       { transform: translateY(8px); opacity: 0.9; }
+}
+
+/* ── Hero section ──────────────────────────────────────────── */
+@layer components {
+  /* Background */
+  .hero-section {
+    background-color: var(--bg-primary);
+  }
+
+  /* Animated radial-gradient mesh (pseudo-element) */
+  .hero-mesh {
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+    pointer-events: none;
+    background:
+      radial-gradient(ellipse 60% 50% at 10% 15%,  rgba(26, 77, 46, 0.18) 0%, transparent 70%),
+      radial-gradient(ellipse 50% 55% at 90% 85%,  rgba(59, 31, 107, 0.18) 0%, transparent 70%),
+      radial-gradient(ellipse 40% 40% at 85% 10%,  rgba(77, 217, 192, 0.05) 0%, transparent 60%);
+    animation: mesh-drift 18s ease-in-out infinite;
+  }
+
+  /* Image wrapper — contains ring + float */
+  .hero-image-wrapper {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  /* Pulsing glow ring behind the portrait */
+  .hero-glow-ring {
+    position: absolute;
+    inset: -6px;
+    border-radius: 9999px;
+    animation: glow-pulse 3.5s ease-in-out infinite;
+    z-index: 0;
+  }
+
+  /* Float wrapper */
+  .hero-image-float {
+    position: relative;
+    z-index: 1;
+    animation: float 6s ease-in-out infinite;
+  }
+
+  /* CTA button */
+  .hero-cta {
+    display: inline-flex;
+    align-items: center;
+    padding: 0.75rem 2rem;
+    border-radius: 9999px;
+    font-size: 0.875rem;
+    font-weight: 500;
+    letter-spacing: 0.05em;
+    color: var(--accent);
+    background: rgba(255, 255, 255, 0.08);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid rgba(255, 255, 255, 0.18);
+    transition: background 0.3s ease, color 0.3s ease, transform 0.3s ease,
+                border-color 0.3s ease;
+  }
+
+  .hero-cta:hover {
+    background: var(--accent);
+    color: var(--bg-primary);
+    border-color: var(--accent);
+    transform: scale(1.05);
+  }
+
+  /* Scroll chevron */
+  .scroll-chevron {
+    width: 18px;
+    height: 18px;
+    border-right: 1.5px solid rgba(247, 245, 241, 0.4);
+    border-bottom: 1.5px solid rgba(247, 245, 241, 0.4);
+    transform: rotate(45deg);
+    animation: chevron-bounce 1.8s ease-in-out infinite;
+  }
+}
+
+/* ── Utilities ─────────────────────────────────────────────── */
 @layer utilities {
   .text-balance {
     text-wrap: balance;
   }
 
   .glass {
-    background: rgba(255, 255, 255, 0.05);
-    backdrop-filter: blur(12px);
-    -webkit-backdrop-filter: blur(12px);
-    border: 1px solid rgba(255, 255, 255, 0.1);
+    background: rgba(247, 245, 241, 0.04);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border: 1px solid rgba(247, 245, 241, 0.08);
+  }
+
+  .font-display {
+    font-family: var(--font-playfair), Georgia, serif;
   }
 }

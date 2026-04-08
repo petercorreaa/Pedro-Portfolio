@@ -5,7 +5,9 @@ export default function Home() {
   return (
     <main className="min-h-screen">
       <HeroSection />
-      <SectionsGrid />
+      <div id="sections">
+        <SectionsGrid />
+      </div>
     </main>
   );
 }

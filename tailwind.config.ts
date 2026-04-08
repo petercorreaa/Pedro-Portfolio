@@ -10,8 +10,29 @@ const config: Config = {
   theme: {
     extend: {
       colors: {
-        background: "var(--background)",
-        foreground: "var(--foreground)",
+        bg: {
+          primary: "#0d0907",
+        },
+        text: {
+          primary: "#f7f5f1",
+        },
+        accent: "#4dd9c0",
+        section: {
+          branding: "#1a4d2e",
+          visual:   "#7a2e0e",
+          social:   "#1e3a5f",
+          uxui:     "#3b1f6b",
+        },
+      },
+      fontFamily: {
+        sans:    ["var(--font-inter)", "system-ui", "sans-serif"],
+        display: ["var(--font-playfair)", "Georgia", "serif"],
+      },
+      backgroundImage: {
+        "gradient-branding": "linear-gradient(to bottom, #0d0907, #1a4d2e)",
+        "gradient-visual":   "linear-gradient(to bottom, #0d0907, #7a2e0e)",
+        "gradient-social":   "linear-gradient(to bottom, #0d0907, #1e3a5f)",
+        "gradient-uxui":     "linear-gradient(to bottom, #0d0907, #3b1f6b)",
       },
     },
   },
