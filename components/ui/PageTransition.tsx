@@ -7,13 +7,15 @@ export default function PageTransition({ children }: { children: React.ReactNode
   const pathname = usePathname();
 
   return (
-    <AnimatePresence mode="wait">
+    // initial={false} → first render shows content immediately at animate state.
+    // Animations only play on subsequent route changes (exit → enter).
+    <AnimatePresence mode="wait" initial={false}>
       <motion.div
         key={pathname}
-        initial={{ opacity: 0, y: 20 }}
+        initial={{ opacity: 0, y: 16 }}
         animate={{ opacity: 1, y: 0 }}
-        exit={{ opacity: 0, y: -20 }}
-        transition={{ duration: 0.5, ease: "easeInOut" }}
+        exit={{ opacity: 0, y: -16 }}
+        transition={{ duration: 0.4, ease: "easeInOut" }}
       >
         {children}
       </motion.div>

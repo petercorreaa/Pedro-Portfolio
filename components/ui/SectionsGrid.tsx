@@ -75,7 +75,10 @@ function ScrambleTitle({
 /* ── Main component ──────────────────────────────────────────── */
 export default function SectionsGrid() {
   const [hoveredId, setHoveredId] = useState<string | null>(null);
+  const [mounted,   setMounted]   = useState(false);
   const { setColor } = useCursor();
+
+  useEffect(() => { setMounted(true); }, []);
 
   function handleEnter(id: string, tint: string) {
     setHoveredId(id);
@@ -102,12 +105,12 @@ export default function SectionsGrid() {
         const isLast    = i === SECTIONS.length - 1;
 
         return (
-          /* Scroll-animated wrapper */
+          /* Scroll-animated wrapper — only animate after client mount */
           <motion.div
             key={section.id}
             className="relative flex-1 overflow-hidden"
             style={{ minHeight: "50vh" }}
-            initial={{ opacity: 0, y: 40 }}
+            initial={mounted ? { opacity: 0, y: 40 } : false}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true, margin: "-80px" }}
             transition={{

@@ -2,6 +2,7 @@
 
 import Image from "next/image";
 import Link from "next/link";
+import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import MagneticButton from "@/components/ui/MagneticButton";
 
@@ -24,6 +25,12 @@ const labelVariant = {
 };
 
 export default function HeroSection() {
+  const [mounted, setMounted] = useState(false);
+  useEffect(() => { setMounted(true); }, []);
+
+  // Until mounted, render visible but un-animated (no flash of invisible content)
+  const animate = mounted ? "show" : "hidden";
+
   return (
     <section className="hero-section relative flex items-center justify-center min-h-screen overflow-hidden px-6 md:px-16">
 
@@ -37,7 +44,7 @@ export default function HeroSection() {
         <motion.div
           className="flex justify-center md:justify-end"
           initial={{ opacity: 0, scale: 0.92 }}
-          animate={{ opacity: 1, scale: 1 }}
+          animate={mounted ? { opacity: 1, scale: 1 } : { opacity: 0, scale: 0.92 }}
           transition={{ duration: 0.9, ease: "easeOut" }}
         >
           <div className="hero-image-wrapper">
@@ -66,7 +73,7 @@ export default function HeroSection() {
           <motion.p
             variants={labelVariant}
             initial="hidden"
-            animate="show"
+            animate={animate}
             className="text-xs uppercase tracking-[0.25em] font-medium"
             style={{ color: "#4dd9c0" }}
           >
@@ -77,7 +84,7 @@ export default function HeroSection() {
           <motion.div
             variants={container}
             initial="hidden"
-            animate="show"
+            animate={animate}
             className="flex flex-col leading-none"
           >
             {["Pedro", "Correa"].map((word) => (
@@ -102,7 +109,7 @@ export default function HeroSection() {
           <motion.p
             variants={fadeUp}
             initial="hidden"
-            animate="show"
+            animate={animate}
             transition={{ duration: 0.7, ease: "easeOut", delay: 0.85 }}
             style={{ color: "rgba(247, 245, 241, 0.6)" }}
             className="text-base md:text-lg leading-relaxed max-w-sm"
@@ -115,7 +122,7 @@ export default function HeroSection() {
           <motion.div
             variants={fadeUp}
             initial="hidden"
-            animate="show"
+            animate={animate}
             transition={{ duration: 0.6, ease: "easeOut", delay: 1.05 }}
           >
             <MagneticButton strength={0.4}>
@@ -131,7 +138,7 @@ export default function HeroSection() {
       <motion.div
         className="absolute bottom-8 left-1/2 -translate-x-1/2 flex flex-col items-center gap-1"
         initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
+        animate={mounted ? { opacity: 1 } : { opacity: 0 }}
         transition={{ delay: 1.6, duration: 0.8 }}
         aria-hidden="true"
       >

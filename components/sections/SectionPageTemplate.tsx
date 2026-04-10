@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Link from "next/link";
 import { motion } from "framer-motion";
 import MagneticButton from "@/components/ui/MagneticButton";
@@ -23,6 +23,8 @@ export default function SectionPageTemplate({
   works,
 }: SectionPageTemplateProps) {
   const [selectedWork, setSelectedWork] = useState<Work | null>(null);
+  const [mounted,      setMounted]      = useState(false);
+  useEffect(() => { setMounted(true); }, []);
 
   return (
     <>
@@ -56,7 +58,7 @@ export default function SectionPageTemplate({
             className="text-xs uppercase tracking-[0.25em] mb-6"
             style={{ color: accentColor }}
             initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
+            animate={mounted ? { opacity: 1 } : { opacity: 0 }}
             transition={{ duration: 0.7, delay: 0.1 }}
           >
             Portfolio
@@ -73,7 +75,7 @@ export default function SectionPageTemplate({
                     lineHeight: 1.05,
                   }}
                   initial={{ y: "110%", opacity: 0 }}
-                  animate={{ y: "0%",   opacity: 1 }}
+                  animate={mounted ? { y: "0%", opacity: 1 } : { y: "110%", opacity: 0 }}
                   transition={{
                     duration: 0.75,
                     delay:    0.2 + i * 0.12,
@@ -94,7 +96,7 @@ export default function SectionPageTemplate({
             {works.map((work, i) => (
               <motion.div
                 key={work.id}
-                initial={{ opacity: 0, y: 28 }}
+                initial={mounted ? { opacity: 0, y: 28 } : false}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true, margin: "-60px" }}
                 transition={{ duration: 0.55, delay: i * 0.08, ease: [0.22, 1, 0.36, 1] }}
