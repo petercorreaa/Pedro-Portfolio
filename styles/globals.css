@@ -2,6 +2,15 @@
 @tailwind components;
 @tailwind utilities;
 
+/* ── Fonts ─────────────────────────────────────────────────── */
+@font-face {
+  font-family: "AkiraExpanded";
+  src: url("/fonts/AkiraExpanded.otf") format("opentype");
+  font-weight: 800;
+  font-style: normal;
+  font-display: swap;
+}
+
 /* ── Design tokens ─────────────────────────────────────────── */
 :root {
   --bg-primary:       #0d0907;
@@ -30,9 +39,13 @@
   body {
     background-color: var(--bg-primary);
     color: var(--text-primary);
-    font-family: var(--font-inter), system-ui, sans-serif;
+    font-family: "Helvetica Neue", "Helvetica", Arial, sans-serif;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    font-family: "AkiraExpanded", sans-serif;
   }
 
   ::selection {
@@ -210,7 +223,7 @@
     border: 1px solid rgba(247, 245, 241, 0.08);
   }
 
-  .font-display {
-    font-family: var(--font-playfair), Georgia, serif;
+  .font-akira {
+    font-family: "AkiraExpanded", sans-serif;
   }
 }

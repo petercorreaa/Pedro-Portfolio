@@ -92,11 +92,11 @@ export default function HeroSection() {
                 <motion.span
                   variants={fadeUp}
                   transition={{ duration: 0.65, ease: [0.22, 1, 0.36, 1] }}
-                  className="block font-display"
+                  className="block font-akira"
                   style={{
-                    fontSize: "clamp(4rem, 9vw, 8rem)",
+                    fontSize: "clamp(2.8rem, 8vw, 7rem)",
                     color: "#f7f5f1",
-                    lineHeight: 1.05,
+                    lineHeight: 1.1,
                   }}
                 >
                   {word}

@@ -68,9 +68,9 @@ export default function SectionPageTemplate({
             {headingWords(title).map((word, i) => (
               <div key={word} className="overflow-hidden">
                 <motion.h1
-                  className="font-display leading-none"
+                  className="font-akira leading-none"
                   style={{
-                    fontSize: "clamp(3rem, 9vw, 9rem)",
+                    fontSize: "clamp(2.2rem, 7vw, 7rem)",
                     color:    "#f7f5f1",
                     lineHeight: 1.05,
                   }}

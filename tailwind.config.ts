@@ -25,8 +25,8 @@ const config: Config = {
         },
       },
       fontFamily: {
-        sans:    ["var(--font-inter)", "system-ui", "sans-serif"],
-        display: ["var(--font-playfair)", "Georgia", "serif"],
+        display: ["AkiraExpanded", "sans-serif"],
+        sans:    ["Helvetica Neue", "Helvetica", "Arial", "sans-serif"],
       },
       backgroundImage: {
         "gradient-branding": "linear-gradient(to bottom, #0d0907, #1a4d2e)",

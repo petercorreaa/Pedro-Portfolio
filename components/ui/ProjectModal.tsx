@@ -173,7 +173,7 @@ export default function ProjectModal({ work, gradient, accentColor, onClose }: P
                 ))}
               </div>
 
-              <h2 className="font-display text-3xl md:text-4xl mb-4" style={{ color: "#f7f5f1" }}>
+              <h2 className="font-akira text-2xl md:text-3xl mb-4" style={{ color: "#f7f5f1" }}>
                 {work.title}
               </h2>
 

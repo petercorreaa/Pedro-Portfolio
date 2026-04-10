@@ -38,7 +38,7 @@ export default function Navbar() {
           <MagneticButton strength={0.2}>
             <Link
               href="/"
-              className="font-display text-xl transition-colors duration-300 hover:text-[#4dd9c0]"
+              className="font-akira text-sm tracking-wider transition-colors duration-300 hover:text-[#4dd9c0]"
               style={{ color: "#f7f5f1" }}
             >
               Pedro Correa

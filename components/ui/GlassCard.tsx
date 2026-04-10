@@ -96,7 +96,7 @@ export default function GlassCard({ work, gradient, accentColor, onClick }: Glas
         <div className="px-5 py-4 flex items-start justify-between gap-3">
           <div>
             <h3
-              className="font-display text-base leading-snug"
+              className="text-base leading-snug font-medium"
               style={{ color: "#f7f5f1" }}
             >
               {work.title}

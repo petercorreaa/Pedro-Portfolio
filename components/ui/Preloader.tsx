@@ -34,7 +34,7 @@ export default function Preloader() {
           <div className="flex flex-col items-center gap-6">
             {/* Monogram */}
             <motion.div
-              className="font-display select-none"
+              className="font-akira select-none"
               style={{
                 fontSize:      "clamp(5rem, 15vw, 9rem)",
                 color:         "#f7f5f1",

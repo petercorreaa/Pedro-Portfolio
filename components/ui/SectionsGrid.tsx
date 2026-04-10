@@ -59,7 +59,7 @@ function ScrambleTitle({
 
   return (
     <motion.h2
-      className="relative z-10 font-display select-none text-center px-4 font-mono"
+      className="relative z-10 font-akira select-none text-center px-4"
       style={{ fontSize: "clamp(2.5rem, 5vw, 5rem)", lineHeight: 1 }}
       animate={{
         color:         active ? tint : "#f7f5f1",
