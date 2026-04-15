@@ -30,6 +30,7 @@ export default function CustomCursor() {
       window.removeEventListener('mouseover', onEnter)
       window.removeEventListener('mouseout', onLeave)
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
   return (

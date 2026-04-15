@@ -27,7 +27,7 @@ export default function ContactSection() {
         </div>
 
         <h2 style={{ fontFamily: 'AkiraExpanded, sans-serif', fontSize: 'clamp(1.4rem, 3vw, 2.2rem)', color: '#f7f5f1', marginBottom: '16px', lineHeight: 1.2 }}>
-          Let's work<br />together.
+          Let&apos;s work<br />together.
         </h2>
 
         <p style={{ fontFamily: 'Helvetica Neue, Helvetica, Arial, sans-serif', fontSize: '15px', lineHeight: '1.8', color: 'rgba(247,245,241,0.6)', marginBottom: '48px', maxWidth: '480px' }}>
