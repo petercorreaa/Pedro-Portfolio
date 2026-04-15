@@ -1,10 +1,17 @@
-import type { Metadata } from "next";
 import "../styles/globals.css";
+import type { Metadata } from "next";
+import dynamic from "next/dynamic";
 import Navbar from "@/components/ui/Navbar";
-import PageTransition from "@/components/ui/PageTransition";
 import CustomCursor from "@/components/ui/CustomCursor";
 import Preloader from "@/components/ui/Preloader";
 import { CursorProvider } from "@/lib/cursor-context";
+import { AudioProvider } from "@/context/AudioContext";
+import FloatingPlayer from "@/components/ui/FloatingPlayer";
+
+const FixedBackground = dynamic(
+  () => import("@/components/ui/fixed-background").then((m) => m.FixedBackground),
+  { ssr: false }
+);
 
 export const metadata: Metadata = {
   title: "Pedro Correa — Creative Portfolio",
@@ -17,16 +24,22 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
+    <html lang="en" style={{ margin: 0, padding: 0, background: "#0d0907", overflowX: "hidden" }}>
       <body
-        style={{ backgroundColor: "#0d0907", color: "#f7f5f1" }}
-        className="antialiased"
+        className="antialiased text-[#f7f5f1]"
+        style={{ margin: 0, padding: 0, background: "#0d0907", overflowX: "hidden" }}
       >
+        <FixedBackground />
         <CursorProvider>
           <Preloader />
-          <CustomCursor />
           <Navbar />
-          <PageTransition>{children}</PageTransition>
+          <AudioProvider>
+            <div style={{ position: "relative", zIndex: 1 }}>
+              {children}
+            </div>
+            <FloatingPlayer />
+            <CustomCursor />
+          </AudioProvider>
         </CursorProvider>
       </body>
     </html>

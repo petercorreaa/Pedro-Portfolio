@@ -1,3 +1,7 @@
+*, *::before, *::after { box-sizing: border-box; }
+
+[data-cursor="work"] { cursor: none; }
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -15,7 +19,7 @@
 :root {
   --bg-primary:       #0d0907;
   --text-primary:     #f7f5f1;
-  --accent:           #4dd9c0;
+  --accent:           #e8e0f5;
 
   /* Section endpoint colors */
   --color-branding:   #1a4d2e;
@@ -34,14 +38,18 @@
 @layer base {
   html {
     scroll-behavior: smooth;
+    background-color: #0d0907;
   }
 
   body {
-    background-color: var(--bg-primary);
+    margin: 0;
+    padding: 0;
+    background-color: #0d0907;
     color: var(--text-primary);
     font-family: "Helvetica Neue", "Helvetica", Arial, sans-serif;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
+    overflow-x: hidden;
   }
 
   h1, h2, h3, h4, h5, h6 {
@@ -74,9 +82,9 @@
   .nav-link {
     position: relative;
     display: inline-block;
-    font-size: 0.75rem;           /* 12px */
+    font-size: 0.6875rem;
     text-transform: uppercase;
-    letter-spacing: 0.1em;
+    letter-spacing: 0.15em;
     color: var(--text-primary);
     transition: color 0.25s ease;
   }
@@ -111,18 +119,9 @@
   50%       { transform: translateY(-14px); }
 }
 
-@keyframes mesh-drift {
-  0%   { transform: translate(0%,   0%)   scale(1);    }
-  33%  { transform: translate(3%,  -4%)   scale(1.04); }
-  66%  { transform: translate(-2%,  3%)   scale(0.97); }
-  100% { transform: translate(0%,   0%)   scale(1);    }
-}
-
 @keyframes glow-pulse {
-  0%, 100% { box-shadow: 0 0 0 3px rgba(77, 217, 192, 0.35),
-                         0 0 32px 8px rgba(77, 217, 192, 0.12); }
-  50%       { box-shadow: 0 0 0 4px rgba(77, 217, 192, 0.55),
-                         0 0 56px 16px rgba(77, 217, 192, 0.22); }
+  0%, 100% { box-shadow: 0 0 1px 0px rgba(232, 224, 245, 0.4); }
+  50%       { box-shadow: 0 0 8px 1px rgba(232, 224, 245, 0.4); }
 }
 
 @keyframes chevron-bounce {
@@ -132,25 +131,10 @@
 
 /* ── Hero section ──────────────────────────────────────────── */
 @layer components {
-  /* Background */
   .hero-section {
-    background-color: var(--bg-primary);
+    background-color: transparent;
   }
 
-  /* Animated radial-gradient mesh (pseudo-element) */
-  .hero-mesh {
-    position: absolute;
-    inset: 0;
-    z-index: 0;
-    pointer-events: none;
-    background:
-      radial-gradient(ellipse 60% 50% at 10% 15%,  rgba(26, 77, 46, 0.18) 0%, transparent 70%),
-      radial-gradient(ellipse 50% 55% at 90% 85%,  rgba(59, 31, 107, 0.18) 0%, transparent 70%),
-      radial-gradient(ellipse 40% 40% at 85% 10%,  rgba(77, 217, 192, 0.05) 0%, transparent 60%);
-    animation: mesh-drift 18s ease-in-out infinite;
-  }
-
-  /* Image wrapper — contains ring + float */
   .hero-image-wrapper {
     position: relative;
     display: inline-flex;
@@ -158,7 +142,6 @@
     justify-content: center;
   }
 
-  /* Pulsing glow ring behind the portrait */
   .hero-glow-ring {
     position: absolute;
     inset: -6px;
@@ -167,14 +150,12 @@
     z-index: 0;
   }
 
-  /* Float wrapper */
   .hero-image-float {
     position: relative;
     z-index: 1;
     animation: float 6s ease-in-out infinite;
   }
 
-  /* CTA button */
   .hero-cta {
     display: inline-flex;
     align-items: center;
@@ -199,7 +180,6 @@
     transform: scale(1.05);
   }
 
-  /* Scroll chevron */
   .scroll-chevron {
     width: 18px;
     height: 18px;
@@ -207,6 +187,22 @@
     border-bottom: 1.5px solid rgba(247, 245, 241, 0.4);
     transform: rotate(45deg);
     animation: chevron-bounce 1.8s ease-in-out infinite;
+  }
+}
+
+/* ── Footer responsive grid ────────────────────────────────── */
+@media (max-width: 768px) {
+  .footer-grid {
+    grid-template-columns: 1fr 1fr !important;
+    gap: 32px !important;
+  }
+  .footer-grid > :first-child {
+    grid-column: 1 / -1;
+  }
+}
+@media (max-width: 480px) {
+  .footer-grid {
+    grid-template-columns: 1fr !important;
   }
 }
 

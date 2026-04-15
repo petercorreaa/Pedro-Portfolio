@@ -10,12 +10,14 @@ export default function Preloader() {
   useEffect(() => {
     setMounted(true);
     const seen = sessionStorage.getItem("pc-preloader");
-    if (!seen) {
-      setShow(true);
+    if (seen) return;
+
+    setShow(true);
+    const timer = setTimeout(() => {
+      setShow(false);
       sessionStorage.setItem("pc-preloader", "1");
-      const timer = setTimeout(() => setShow(false), 1800);
-      return () => clearTimeout(timer);
-    }
+    }, 1800);
+    return () => clearTimeout(timer);
   }, []);
 
   if (!mounted) return null;
@@ -53,7 +55,7 @@ export default function Preloader() {
             <motion.div
               style={{
                 height:      1,
-                background:  "#4dd9c0",
+                background:  "#e8e0f5",
                 originX:     0.5,
               }}
               initial={{ scaleX: 0, width: 120, opacity: 0.6 }}

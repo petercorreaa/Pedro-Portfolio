@@ -16,7 +16,7 @@ const config: Config = {
         text: {
           primary: "#f7f5f1",
         },
-        accent: "#4dd9c0",
+        accent: "#e8e0f5",
         section: {
           branding: "#1a4d2e",
           visual:   "#7a2e0e",

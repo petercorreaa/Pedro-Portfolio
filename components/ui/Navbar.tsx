@@ -1,59 +1,89 @@
 "use client";
 
-import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import { NAV_LINKS } from "@/lib/constants";
 import MagneticButton from "@/components/ui/MagneticButton";
 
+const sectionActiveColors: Record<string, string> = {
+  '/branding': '#5db87e',
+  '/visual':   '#d4622a',
+  '/social':   '#4a7fbf',
+  '/uxui':     '#8b52d4',
+}
+
 export default function Navbar() {
   const pathname = usePathname();
-  const [scrolled, setScrolled] = useState(false);
-  const [menuOpen, setMenuOpen] = useState(false);
+  const router   = useRouter();
+  const [scrolled,  setScrolled]  = useState(false);
+  const [menuOpen,  setMenuOpen]  = useState(false);
 
   useEffect(() => {
-    const onScroll = () => setScrolled(window.scrollY > 50);
+    const onScroll = () => setScrolled(window.scrollY > 60);
     window.addEventListener("scroll", onScroll, { passive: true });
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
 
-  // Close menu on route change
   useEffect(() => setMenuOpen(false), [pathname]);
+
+  const goTo = (id: string) => {
+    if (pathname === '/') {
+      document.getElementById(id)?.scrollIntoView({ behavior: 'smooth' });
+    } else {
+      router.push('/');
+      setTimeout(() => document.getElementById(id)?.scrollIntoView({ behavior: 'smooth' }), 300);
+    }
+  };
 
   return (
     <>
       <header
-        className="fixed top-0 left-0 right-0 z-50 transition-colors duration-300 border-b border-white/10"
+        className="fixed z-50 transition-all duration-300"
         style={{
-          backdropFilter: "blur(12px)",
-          WebkitBackdropFilter: "blur(12px)",
-          backgroundColor: scrolled
-            ? "rgba(13, 9, 7, 0.85)"
-            : "rgba(255, 255, 255, 0.05)",
+          top:                  "20px",
+          margin:               "20px 24px 0",
+          width:                "calc(100% - 48px)",
+          background:           scrolled ? "rgba(255,255,255,0.10)" : "rgba(255,255,255,0.06)",
+          backdropFilter:       "blur(20px) saturate(180%)",
+          WebkitBackdropFilter: "blur(20px) saturate(180%)",
+          border:               "1px solid rgba(255,255,255,0.12)",
+          borderRadius:         "999px",
+          padding:              "18px 48px",
+          boxShadow:            "0 8px 32px rgba(0,0,0,0.4), inset 0 1px 0 rgba(255,255,255,0.1)",
         }}
       >
-        <div className="max-w-7xl mx-auto px-6 h-16 flex items-center justify-between">
-          {/* Logotype */}
-          <MagneticButton strength={0.2}>
-            <Link
-              href="/"
-              className="font-akira text-sm tracking-wider transition-colors duration-300 hover:text-[#4dd9c0]"
-              style={{ color: "#f7f5f1" }}
-            >
-              Pedro Correa
-            </Link>
-          </MagneticButton>
+        <div className="flex items-center justify-between w-full gap-8">
+          <button
+            onClick={() => { router.push('/'); setTimeout(() => window.scrollTo({ top: 0, behavior: 'smooth' }), 100); }}
+            className="font-akira tracking-wider transition-colors duration-300 hover:text-[#e8e0f5] whitespace-nowrap"
+            style={{ color: "#f7f5f1", fontSize: "clamp(0.75rem, 1.2vw, 1rem)", background: 'none', border: 'none', padding: 0, cursor: 'pointer' }}
+          >
+            Pedro Correa
+          </button>
 
           {/* Desktop nav */}
           <nav className="hidden md:flex items-center gap-8">
+            <MagneticButton strength={0.25}>
+              <NavButton onClick={() => goTo('about')}>About</NavButton>
+            </MagneticButton>
             {NAV_LINKS.map((link) => (
               <MagneticButton key={link.href} strength={0.25}>
-                <NavLink href={link.href} active={pathname === link.href}>
+                <NavButton
+                  onClick={() => router.push(link.href)}
+                  active={pathname === link.href}
+                  activeColor={sectionActiveColors[link.href]}
+                >
                   {link.label}
-                </NavLink>
+                </NavButton>
               </MagneticButton>
             ))}
+            <MagneticButton strength={0.25}>
+              <NavButton onClick={() => goTo('music')}>Music</NavButton>
+            </MagneticButton>
+            <MagneticButton strength={0.25}>
+              <NavButton onClick={() => goTo('contact')}>Contact</NavButton>
+            </MagneticButton>
           </nav>
 
           {/* Hamburger */}
@@ -90,26 +120,46 @@ export default function Navbar() {
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -8 }}
             transition={{ duration: 0.25, ease: "easeInOut" }}
-            className="fixed top-16 left-0 right-0 z-40 md:hidden border-b border-white/10"
+            className="fixed z-40 md:hidden"
             style={{
-              backdropFilter: "blur(20px)",
-              WebkitBackdropFilter: "blur(20px)",
-              backgroundColor: "rgba(13, 9, 7, 0.9)",
+              top:                  "76px",
+              left:                 "50%",
+              transform:            "translateX(-50%)",
+              minWidth:             "min(90vw, 500px)",
+              background:           "rgba(13,9,7,0.92)",
+              backdropFilter:       "blur(20px) saturate(180%)",
+              WebkitBackdropFilter: "blur(20px) saturate(180%)",
+              border:               "1px solid rgba(255,255,255,0.12)",
+              borderRadius:         "20px",
+              boxShadow:            "0 8px 32px rgba(0,0,0,0.4)",
             }}
           >
             <nav className="flex flex-col px-6 py-6 gap-5">
+              <motion.div initial={{ opacity: 0, x: -12 }} animate={{ opacity: 1, x: 0 }} transition={{ duration: 0.2 }}>
+                <NavButton onClick={() => { goTo('about'); setMenuOpen(false); }}>About</NavButton>
+              </motion.div>
               {NAV_LINKS.map((link, i) => (
                 <motion.div
                   key={link.href}
                   initial={{ opacity: 0, x: -12 }}
                   animate={{ opacity: 1, x: 0 }}
-                  transition={{ delay: i * 0.06, duration: 0.2 }}
+                  transition={{ delay: (i + 1) * 0.06, duration: 0.2 }}
                 >
-                  <NavLink href={link.href} active={pathname === link.href}>
+                  <NavButton
+                    onClick={() => { router.push(link.href); setMenuOpen(false); }}
+                    active={pathname === link.href}
+                    activeColor={sectionActiveColors[link.href]}
+                  >
                     {link.label}
-                  </NavLink>
+                  </NavButton>
                 </motion.div>
               ))}
+              <motion.div initial={{ opacity: 0, x: -12 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: (NAV_LINKS.length + 1) * 0.06, duration: 0.2 }}>
+                <NavButton onClick={() => { goTo('music'); setMenuOpen(false); }}>Music</NavButton>
+              </motion.div>
+              <motion.div initial={{ opacity: 0, x: -12 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: (NAV_LINKS.length + 2) * 0.06, duration: 0.2 }}>
+                <NavButton onClick={() => { goTo('contact'); setMenuOpen(false); }}>Contact</NavButton>
+              </motion.div>
             </nav>
           </motion.div>
         )}
@@ -118,18 +168,30 @@ export default function Navbar() {
   );
 }
 
-function NavLink({
-  href,
+function NavButton({
+  onClick,
   active,
+  activeColor,
   children,
 }: {
-  href: string;
-  active: boolean;
+  onClick: () => void;
+  active?: boolean;
+  activeColor?: string;
   children: React.ReactNode;
 }) {
   return (
-    <Link href={href} className={`nav-link ${active ? "nav-link--active" : ""}`}>
+    <button
+      onClick={onClick}
+      className={`nav-link ${active ? "nav-link--active" : ""}`}
+      style={{
+        background: 'none',
+        border:     'none',
+        padding:    0,
+        cursor:     'pointer',
+        ...(active && activeColor ? { color: activeColor } : {}),
+      }}
+    >
       {children}
-    </Link>
+    </button>
   );
 }

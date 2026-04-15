@@ -1,47 +1,70 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import Image from "next/image";
+import { useCallback, useEffect, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
-import type { Work } from "./GlassCard";
+import type { WorkItem } from "@/lib/constants";
 
 interface ProjectModalProps {
-  work:        Work | null;
-  gradient:    string;
+  work:        WorkItem | null;
   accentColor: string;
   onClose:     () => void;
 }
 
-const CAROUSEL_SLIDES = 3;
+const glassBtn: React.CSSProperties = {
+  background:           "rgba(247,245,241,0.08)",
+  backdropFilter:       "blur(16px)",
+  WebkitBackdropFilter: "blur(16px)",
+  border:               "1px solid rgba(247,245,241,0.15)",
+  color:                "#f7f5f1",
+};
 
-export default function ProjectModal({ work, gradient, accentColor, onClose }: ProjectModalProps) {
-  const [slide, setSlide] = useState(0);
+export default function ProjectModal({ work, accentColor, onClose }: ProjectModalProps) {
+  const [index, setIndex] = useState(0);
 
-  // Reset carousel when a new work opens
-  useEffect(() => { setSlide(0); }, [work?.id]);
+  const total = work?.files.length ?? 0;
 
-  // Close on Escape
+  useEffect(() => { setIndex(0); }, [work?.id]);
+
+  const prev = useCallback(() => {
+    setIndex((i) => (total === 0 ? 0 : (i - 1 + total) % total));
+  }, [total]);
+
+  const next = useCallback(() => {
+    setIndex((i) => (total === 0 ? 0 : (i + 1) % total));
+  }, [total]);
+
   useEffect(() => {
-    const handler = (e: KeyboardEvent) => { if (e.key === "Escape") onClose(); };
+    if (!work) return;
+    const handler = (e: KeyboardEvent) => {
+      if (e.key === "Escape")    onClose();
+      if (e.key === "ArrowLeft") prev();
+      if (e.key === "ArrowRight") next();
+    };
     window.addEventListener("keydown", handler);
     return () => window.removeEventListener("keydown", handler);
-  }, [onClose]);
+  }, [work, onClose, prev, next]);
 
-  // Lock body scroll while open
   useEffect(() => {
     if (work) document.body.style.overflow = "hidden";
-    else document.body.style.overflow = "";
+    else      document.body.style.overflow = "";
     return () => { document.body.style.overflow = ""; };
   }, [work]);
 
+  const current = work?.files[index];
+
   return (
     <AnimatePresence>
-      {work && (
+      {work && current && (
         <>
-          {/* ── Backdrop ────────────────────────────────── */}
           <motion.div
             key="backdrop"
             className="fixed inset-0 z-[100]"
-            style={{ background: "rgba(13,9,7,0.85)", backdropFilter: "blur(12px)" }}
+            style={{
+              background:           "rgba(13,9,7,0.88)",
+              backdropFilter:       "blur(24px)",
+              WebkitBackdropFilter: "blur(24px)",
+            }}
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
@@ -49,149 +72,170 @@ export default function ProjectModal({ work, gradient, accentColor, onClose }: P
             onClick={onClose}
           />
 
-          {/* ── Panel ───────────────────────────────────── */}
           <motion.div
             key="panel"
-            className="fixed z-[101] inset-x-4 inset-y-4 md:inset-x-8 md:inset-y-8 lg:inset-x-16 lg:inset-y-10 flex flex-col rounded-3xl overflow-hidden"
-            style={{
-              background:           "rgba(247,245,241,0.05)",
-              backdropFilter:       "blur(32px)",
-              WebkitBackdropFilter: "blur(32px)",
-              border:               `1px solid rgba(247,245,241,0.12)`,
-              boxShadow:            `0 40px 80px -20px rgba(0,0,0,0.7)`,
-            }}
-            initial={{ opacity: 0, scale: 0.94, y: 20 }}
-            animate={{ opacity: 1, scale: 1,    y: 0  }}
-            exit={{    opacity: 0, scale: 0.94, y: 20  }}
+            className="fixed inset-0 z-[101] flex flex-col pointer-events-none"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
             transition={{ duration: 0.35, ease: [0.32, 0.72, 0, 1] }}
           >
-            {/* ── Close button ──────────────────────────── */}
+            {/* ── Fixed close button ────────────────────────── */}
             <button
               onClick={onClose}
               aria-label="Close"
-              className="absolute top-5 right-5 z-10 w-9 h-9 rounded-full flex items-center justify-center transition-colors"
-              style={{
-                background: "rgba(247,245,241,0.1)",
-                border:     "1px solid rgba(247,245,241,0.15)",
-                color:      "#f7f5f1",
-              }}
+              className="pointer-events-auto fixed w-10 h-10 rounded-full flex items-center justify-center transition-colors"
+              style={{ ...glassBtn, top: '110px', right: '24px', zIndex: 999 }}
             >
               <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
                 <path d="M1 1l12 12M13 1L1 13" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/>
               </svg>
             </button>
 
-            {/* ── Image carousel ────────────────────────── */}
-            <div className="relative flex-shrink-0 overflow-hidden" style={{ height: "55%" }}>
-              {/* Slide area */}
-              <AnimatePresence mode="wait">
-                <motion.div
-                  key={slide}
-                  className="absolute inset-0 flex items-center justify-center"
-                  style={{ background: gradient }}
-                  initial={{ opacity: 0, x: 40 }}
-                  animate={{ opacity: 1, x: 0  }}
-                  exit={{    opacity: 0, x: -40 }}
-                  transition={{ duration: 0.3, ease: "easeInOut" }}
-                >
-                  {/* Noise overlay */}
-                  <div
-                    className="absolute inset-0 opacity-15"
-                    style={{
-                      backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E")`,
-                      backgroundSize: "128px 128px",
-                    }}
-                  />
-                  <div className="relative text-center">
-                    <p
-                      className="text-xs uppercase tracking-[0.2em] mb-3"
-                      style={{ color: "rgba(247,245,241,0.4)" }}
-                    >
-                      Image {slide + 1} / {CAROUSEL_SLIDES}
-                    </p>
-                    <svg width="48" height="48" viewBox="0 0 48 48" fill="none" style={{ opacity: 0.2 }}>
-                      <rect x="4" y="4" width="40" height="40" rx="6" stroke="white" strokeWidth="1.5"/>
-                      <circle cx="17" cy="18" r="4" stroke="white" strokeWidth="1.5"/>
-                      <path d="M4 34l11-9 8 6 8-5 13 10" stroke="white" strokeWidth="1.5" strokeLinejoin="round"/>
-                    </svg>
-                  </div>
-                </motion.div>
-              </AnimatePresence>
-
-              {/* Prev / Next */}
-              {slide > 0 && (
-                <button
-                  onClick={() => setSlide((s) => s - 1)}
-                  className="absolute left-4 top-1/2 -translate-y-1/2 w-9 h-9 rounded-full flex items-center justify-center"
-                  style={{ background: "rgba(247,245,241,0.12)", border: "1px solid rgba(247,245,241,0.2)", color: "#f7f5f1" }}
-                >
-                  ←
-                </button>
-              )}
-              {slide < CAROUSEL_SLIDES - 1 && (
-                <button
-                  onClick={() => setSlide((s) => s + 1)}
-                  className="absolute right-4 top-1/2 -translate-y-1/2 w-9 h-9 rounded-full flex items-center justify-center"
-                  style={{ background: "rgba(247,245,241,0.12)", border: "1px solid rgba(247,245,241,0.2)", color: "#f7f5f1" }}
-                >
-                  →
-                </button>
-              )}
-
-              {/* Dots */}
-              <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex gap-2">
-                {Array.from({ length: CAROUSEL_SLIDES }).map((_, i) => (
-                  <button
-                    key={i}
-                    onClick={() => setSlide(i)}
-                    className="rounded-full transition-all duration-300"
-                    style={{
-                      width:      i === slide ? 20 : 6,
-                      height:     6,
-                      background: i === slide ? accentColor : "rgba(247,245,241,0.3)",
-                    }}
-                  />
-                ))}
-              </div>
-            </div>
-
-            {/* ── Detail area ───────────────────────────── */}
-            <div className="flex-1 overflow-y-auto px-8 py-7">
-              <div className="flex flex-wrap gap-2 mb-4">
+            {/* ── Tags + title ──────────────────────────────── */}
+            <div className="pointer-events-auto px-5 md:px-10" style={{ paddingTop: '180px', paddingBottom: '20px' }}>
+              <div className="flex flex-wrap gap-1.5 mb-2">
                 {work.tags.map((tag) => (
                   <span
                     key={tag}
-                    className="text-[10px] uppercase tracking-wider px-2.5 py-1 rounded-full"
+                    className="text-[10px] uppercase tracking-wider px-2 py-0.5 rounded-full"
                     style={{
                       background: `${accentColor}18`,
                       color:       accentColor,
-                      border:      `1px solid ${accentColor}35`,
+                      border:     `1px solid ${accentColor}35`,
                     }}
                   >
                     {tag}
                   </span>
                 ))}
               </div>
-
-              <h2 className="font-akira text-2xl md:text-3xl mb-4" style={{ color: "#f7f5f1" }}>
+              <h2
+                className="font-akira text-xl md:text-2xl truncate"
+                style={{ color: "#f7f5f1" }}
+              >
                 {work.title}
               </h2>
+              {work.url && (
+                <a
+                  href={work.url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  style={{
+                    display:        'inline-flex',
+                    alignItems:     'center',
+                    gap:            '8px',
+                    padding:        '8px 20px',
+                    borderRadius:   '999px',
+                    border:         '1px solid rgba(247,245,241,0.2)',
+                    background:     'rgba(255,255,255,0.05)',
+                    backdropFilter: 'blur(12px)',
+                    color:          '#f7f5f1',
+                    fontFamily:     'Helvetica Neue, Helvetica, Arial, sans-serif',
+                    fontSize:       '12px',
+                    letterSpacing:  '0.15em',
+                    textTransform:  'uppercase',
+                    textDecoration: 'none',
+                    marginTop:      '12px',
+                    transition:     'all 0.3s ease',
+                  }}
+                >
+                  Visit Website →
+                </a>
+              )}
+            </div>
 
-              <p className="text-base leading-relaxed" style={{ color: "rgba(247,245,241,0.6)" }}>
+            <div
+              className="relative flex-1 min-h-0 flex items-center justify-center px-5 md:px-20 pointer-events-none"
+            >
+              <AnimatePresence mode="wait">
+                <motion.div
+                  key={`${work.id}-${index}`}
+                  className="relative w-full h-full flex items-center justify-center pointer-events-auto"
+                  initial={{ opacity: 0, scale: 0.98 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  exit={{    opacity: 0, scale: 0.98 }}
+                  transition={{ duration: 0.3, ease: [0.32, 0.72, 0, 1] }}
+                >
+                  {current.type === "image" ? (
+                    <div className="relative w-full h-full">
+                      <Image
+                        src={current.src}
+                        alt={work.title}
+                        fill
+                        sizes="100vw"
+                        style={{ objectFit: "contain" }}
+                        priority
+                      />
+                    </div>
+                  ) : (
+                    <video
+                      key={current.src}
+                      src={current.src}
+                      controls
+                      autoPlay
+                      loop
+                      playsInline
+                      style={{ maxWidth: "100%", maxHeight: "100%", objectFit: "contain" }}
+                    />
+                  )}
+                </motion.div>
+              </AnimatePresence>
+
+              {total > 1 && (
+                <>
+                  <button
+                    onClick={prev}
+                    aria-label="Previous"
+                    className="pointer-events-auto absolute left-3 md:left-6 top-1/2 -translate-y-1/2 w-11 h-11 rounded-full flex items-center justify-center"
+                    style={glassBtn}
+                  >
+                    ←
+                  </button>
+                  <button
+                    onClick={next}
+                    aria-label="Next"
+                    className="pointer-events-auto absolute right-3 md:right-6 top-1/2 -translate-y-1/2 w-11 h-11 rounded-full flex items-center justify-center"
+                    style={glassBtn}
+                  >
+                    →
+                  </button>
+                </>
+              )}
+            </div>
+
+            <div className="pointer-events-auto px-5 md:px-10 py-5">
+              <p
+                className="text-sm md:text-base leading-relaxed mb-4 max-w-3xl"
+                style={{ color: "rgba(247,245,241,0.65)" }}
+              >
                 {work.description}
               </p>
 
-              <div className="mt-6 pt-6" style={{ borderTop: "1px solid rgba(247,245,241,0.08)" }}>
-                <p className="text-xs uppercase tracking-widest mb-3" style={{ color: "rgba(247,245,241,0.3)" }}>
-                  Detalles del proyecto
-                </p>
-                <div className="grid grid-cols-2 gap-4 text-sm" style={{ color: "rgba(247,245,241,0.55)" }}>
-                  <div><span style={{ color: accentColor }}>Cliente</span><br/>Por definir</div>
-                  <div><span style={{ color: accentColor }}>Año</span><br/>2024</div>
-                  <div><span style={{ color: accentColor }}>Servicios</span><br/>{work.tags.join(", ")}</div>
-                  <div><span style={{ color: accentColor }}>Entregables</span><br/>Por definir</div>
+              {total > 1 && (
+                <div className="flex items-center gap-3">
+                  <span
+                    className="text-xs uppercase tracking-widest tabular-nums"
+                    style={{ color: "rgba(247,245,241,0.4)" }}
+                  >
+                    {String(index + 1).padStart(2, "0")} / {String(total).padStart(2, "0")}
+                  </span>
+                  <div className="flex gap-1.5 flex-1 overflow-x-auto">
+                    {work.files.map((_, i) => (
+                      <button
+                        key={i}
+                        onClick={() => setIndex(i)}
+                        aria-label={`Go to ${i + 1}`}
+                        className="rounded-full transition-all duration-300 flex-shrink-0"
+                        style={{
+                          width:      i === index ? 24 : 6,
+                          height:     6,
+                          background: i === index ? accentColor : "rgba(247,245,241,0.3)",
+                        }}
+                      />
+                    ))}
+                  </div>
                 </div>
-              </div>
+              )}
             </div>
           </motion.div>
         </>

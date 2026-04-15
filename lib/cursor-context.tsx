@@ -8,12 +8,12 @@ interface CursorCtx {
 }
 
 const CursorContext = createContext<CursorCtx>({
-  color: "#4dd9c0",
+  color: "#e8e0f5",
   setColor: () => {},
 });
 
 export function CursorProvider({ children }: { children: React.ReactNode }) {
-  const [color, setColor] = useState("#4dd9c0");
+  const [color, setColor] = useState("#e8e0f5");
   return (
     <CursorContext.Provider value={{ color, setColor }}>
       {children}
