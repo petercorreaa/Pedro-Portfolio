@@ -1,10 +1,12 @@
 "use client";
 
 import Link from "next/link";
-import { useEffect, useState } from "react";
-import { motion } from "framer-motion";
+import { useEffect, useRef, useState } from "react";
+import { motion, useInView } from "framer-motion";
 import { SECTIONS } from "@/lib/constants";
 import { useCursor } from "@/lib/cursor-context";
+import { useLang } from "@/lib/i18n";
+import { useMediaQuery } from "@/lib/use-media-query";
 
 /* ── Per-section organic radial-gradient backgrounds ─────────── */
 const SECTION_BACKGROUNDS: Record<string, string> = {
@@ -69,12 +71,11 @@ function ScrambleTitle({ text, active }: { text: string; active: boolean }) {
 
   return (
     <motion.h2
-      className="relative z-10 font-akira select-none text-center"
+      className="relative z-10 font-display select-none text-center text-[clamp(1.8rem,9vw,2.6rem)] md:text-[clamp(1.5rem,4vw,2.6rem)] lg:text-[clamp(1.4rem,2.8vw,2.6rem)]"
       style={{
-        fontSize:         "clamp(1.1rem, 2.2vw, 2rem)",
         lineHeight:       1,
-        letterSpacing:    "0.15em",
-        padding:          "0 2rem",
+        letterSpacing:    "0.08em",
+        padding:          "0 1rem",
         overflow:         "visible",
         WebkitTextStroke: "1px #f7f5f1",
       }}
@@ -88,131 +89,152 @@ function ScrambleTitle({ text, active }: { text: string; active: boolean }) {
   );
 }
 
-/* ── Main component ──────────────────────────────────────────── */
-export default function SectionsGrid() {
-  const [hoveredId, setHoveredId] = useState<string | null>(null);
-  const [mounted,   setMounted]   = useState(false);
+/* ── Sub-component: one card ─────────────────────────────────── */
+type Section = (typeof SECTIONS)[number];
+
+function SectionCard({
+  section,
+  index,
+  mounted,
+  isTouch,
+}: {
+  section: Section;
+  index:   number;
+  mounted: boolean;
+  isTouch: boolean;
+}) {
+  const ref = useRef<HTMLDivElement>(null);
+  const [hovered, setHovered] = useState(false);
   const { setColor } = useCursor();
+  const { lang } = useLang();
 
-  useEffect(() => { setMounted(true); }, []);
+  /* Touch screens can't hover — activate the card while it crosses the middle of the viewport */
+  const inCenter = useInView(ref, { margin: "-42% 0px -42% 0px" });
+  const isActive = hovered || (isTouch && inCenter);
 
-  function handleEnter(id: string, tint: string) {
-    setHoveredId(id);
-    setColor(tint);
+  function handleEnter() {
+    if (isTouch) return;
+    setHovered(true);
+    setColor(section.tint);
   }
   function handleLeave() {
-    setHoveredId(null);
+    if (isTouch) return;
+    setHovered(false);
     setColor("#e8e0f5");
   }
 
   return (
-    <section
-      id="sections"
+    /* Outer card shell */
+    <motion.div
+      ref={ref}
+      data-cursor="work"
+      className="h-[clamp(260px,72vw,380px)] md:h-auto lg:flex-1"
       style={{
-        display:       "flex",
-        flexDirection: "row",
-        gap:           "12px",
-        padding:       "12px",
-        height:        "100vh",
-        alignItems:    "stretch",
+        borderRadius: "24px",
+        overflow:     "hidden",
+        position:     "relative",
+        boxShadow:    "0 8px 32px rgba(0,0,0,0.4), inset 0 1px 0 rgba(255,255,255,0.08)",
+      }}
+      initial={mounted ? { opacity: 0, y: 40 } : false}
+      whileInView={{ opacity: 1, y: 0 }}
+      viewport={{ once: true, margin: "-80px" }}
+      transition={{
+        duration: 0.65,
+        delay:    isTouch ? 0 : index * 0.1,
+        ease:     [0.22, 1, 0.36, 1],
       }}
     >
-      {SECTIONS.map((section, i) => {
-        const isHovered = hoveredId === section.id;
+      {/* ── Glassmorphism layer ───────────────────────── */}
+      <div
+        style={{
+          position:             "absolute",
+          inset:                0,
+          background:           "rgba(255,255,255,0.04)",
+          backdropFilter:       "blur(12px) saturate(150%)",
+          WebkitBackdropFilter: "blur(12px) saturate(150%)",
+          border:               "1px solid rgba(255,255,255,0.1)",
+          borderRadius:         "24px",
+          pointerEvents:        "none",
+          zIndex:               1,
+        }}
+      />
 
-        return (
-          /* Outer card shell */
-          <motion.div
-            key={section.id}
-            data-cursor="work"
-            style={{
-              flex:         1,
-              borderRadius: "24px",
-              overflow:     "hidden",
-              position:     "relative",
-              boxShadow:    "0 8px 32px rgba(0,0,0,0.4), inset 0 1px 0 rgba(255,255,255,0.08)",
-            }}
-            initial={mounted ? { opacity: 0, y: 40 } : false}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true, margin: "-80px" }}
-            transition={{
-              duration: 0.65,
-              delay:    i * 0.1,
-              ease:     [0.22, 1, 0.36, 1],
-            }}
-          >
-            {/* ── Glassmorphism layer ───────────────────────── */}
-            <div
-              style={{
-                position:             "absolute",
-                inset:                0,
-                background:           "rgba(255,255,255,0.04)",
-                backdropFilter:       "blur(12px) saturate(150%)",
-                WebkitBackdropFilter: "blur(12px) saturate(150%)",
-                border:               "1px solid rgba(255,255,255,0.1)",
-                borderRadius:         "24px",
-                pointerEvents:        "none",
-                zIndex:               1,
-              }}
-            />
+      <Link
+        href={section.href}
+        className="absolute inset-0 flex items-center justify-center cursor-none"
+        onMouseEnter={handleEnter}
+        onMouseLeave={handleLeave}
+      >
+        {/* ── Organic radial-gradient background ───────── */}
+        <div
+          className="absolute inset-0"
+          style={{ background: SECTION_BACKGROUNDS[section.id] }}
+        />
 
-            <Link
-              href={section.href}
-              className="absolute inset-0 flex items-center justify-center cursor-none"
-              onMouseEnter={() => handleEnter(section.id, section.tint)}
-              onMouseLeave={handleLeave}
+        {/* ── Hover brightness overlay ──────────────────── */}
+        <motion.div
+          className="absolute inset-0 bg-white"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: isActive ? 0.04 : 0 }}
+          transition={{ duration: 0.4 }}
+        />
+
+        {/* ── Scramble title ────────────────────────────── */}
+        <ScrambleTitle text={section.label} active={isActive} />
+
+        {/* ── Bottom glass info panel ───────────────────── */}
+        <motion.div
+          className="absolute left-0 right-0 bottom-0 z-20"
+          style={{
+            background:           "rgba(247,245,241,0.05)",
+            backdropFilter:       "blur(16px)",
+            WebkitBackdropFilter: "blur(16px)",
+            borderTop:            "1px solid rgba(247,245,241,0.1)",
+          }}
+          initial={{ y: "100%" }}
+          animate={{ y: isActive ? "0%" : "100%" }}
+          transition={{ duration: 0.4, ease: [0.32, 0.72, 0, 1] }}
+        >
+          <div className="flex items-center justify-between px-5 py-4 md:px-6 md:py-5">
+            <p
+              className="text-sm leading-relaxed"
+              style={{ color: "rgba(247,245,241,0.65)", maxWidth: "16rem" }}
             >
-              {/* ── Organic radial-gradient background ───────── */}
-              <div
-                className="absolute inset-0"
-                style={{ background: SECTION_BACKGROUNDS[section.id] }}
-              />
+              {section.description[lang]}
+            </p>
+            <motion.span
+              className="text-2xl flex-shrink-0 ml-4"
+              style={{ color: section.tint }}
+              animate={{ x: isActive ? 4 : 0 }}
+              transition={{ duration: 0.3 }}
+            >
+              →
+            </motion.span>
+          </div>
+        </motion.div>
+      </Link>
+    </motion.div>
+  );
+}
 
-              {/* ── Hover brightness overlay ──────────────────── */}
-              <motion.div
-                className="absolute inset-0 bg-white"
-                initial={{ opacity: 0 }}
-                animate={{ opacity: isHovered ? 0.04 : 0 }}
-                transition={{ duration: 0.4 }}
-              />
+/* ── Main component ──────────────────────────────────────────── */
+export default function SectionsGrid() {
+  const [mounted, setMounted] = useState(false);
+  const isTouch = useMediaQuery("(hover: none)");
 
-              {/* ── Scramble title ────────────────────────────── */}
-              <ScrambleTitle text={section.label} active={isHovered} />
+  useEffect(() => { setMounted(true); }, []);
 
-              {/* ── Bottom glass info panel ───────────────────── */}
-              <motion.div
-                className="absolute left-0 right-0 bottom-0 z-20"
-                style={{
-                  background:           "rgba(247,245,241,0.05)",
-                  backdropFilter:       "blur(16px)",
-                  WebkitBackdropFilter: "blur(16px)",
-                  borderTop:            "1px solid rgba(247,245,241,0.1)",
-                }}
-                initial={{ y: "100%" }}
-                animate={{ y: isHovered ? "0%" : "100%" }}
-                transition={{ duration: 0.4, ease: [0.32, 0.72, 0, 1] }}
-              >
-                <div className="flex items-center justify-between px-6 py-5">
-                  <p
-                    className="text-sm leading-relaxed"
-                    style={{ color: "rgba(247,245,241,0.65)", maxWidth: "16rem" }}
-                  >
-                    {section.description}
-                  </p>
-                  <motion.span
-                    className="text-2xl flex-shrink-0 ml-4"
-                    style={{ color: section.tint }}
-                    animate={{ x: isHovered ? 4 : 0 }}
-                    transition={{ duration: 0.3 }}
-                  >
-                    →
-                  </motion.span>
-                </div>
-              </motion.div>
-            </Link>
-          </motion.div>
-        );
-      })}
+  return (
+    <section className="flex flex-col gap-4 p-4 md:grid md:grid-cols-2 md:grid-rows-2 md:h-screen md:gap-3 md:p-3 lg:flex lg:flex-row">
+      {SECTIONS.map((section, i) => (
+        <SectionCard
+          key={section.id}
+          section={section}
+          index={i}
+          mounted={mounted}
+          isTouch={isTouch}
+        />
+      ))}
     </section>
   );
 }

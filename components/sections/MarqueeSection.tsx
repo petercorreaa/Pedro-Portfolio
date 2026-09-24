@@ -1,5 +1,5 @@
 "use client";
-import { PerspectiveMarquee } from "@/components/ui/perspective-marquee";
+import { GooeyMarquee } from "@/components/ui/gooey-marquee";
 
 const TOOLS = [
   "Illustrator",
@@ -15,30 +15,11 @@ const TOOLS = [
 
 export default function MarqueeSection() {
   return (
-    <section
-      style={{
-        width:                "100vw",
-        height:               "90px",
-        overflow:             "hidden",
-        borderRadius:         "0",
-        background:           "rgba(255,255,255,0.06)",
-        backdropFilter:       "blur(20px) saturate(180%)",
-        WebkitBackdropFilter: "blur(20px) saturate(180%)",
-        border:               "1px solid rgba(255,255,255,0.12)",
-        boxShadow:            "0 8px 32px rgba(0,0,0,0.4), inset 0 1px 0 rgba(255,255,255,0.1)",
-      }}
-    >
-      <PerspectiveMarquee
-        items={TOOLS}
-        fontSize={22}
-        color="#f7f5f1"
-        pixelsPerFrame={2}
-        rotateX={2}
-        rotateY={0}
-        perspective={1200}
-        background="transparent"
-        fadeColor="transparent"
-        speed={1}
+    <section aria-label="Tools">
+      <GooeyMarquee
+        text={TOOLS.join(" · ")}
+        speed={60}
+        className="h-24 text-5xl md:h-32 md:text-8xl font-bold uppercase tracking-tight text-[#f7f5f1]"
       />
     </section>
   );

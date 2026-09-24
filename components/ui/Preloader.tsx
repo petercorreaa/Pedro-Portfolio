@@ -2,20 +2,23 @@
 
 import { useEffect, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
+import { useLang } from "@/lib/i18n";
 
 export default function Preloader() {
   const [mounted, setMounted] = useState(false);
   const [show,    setShow]    = useState(false);
+  const { t } = useLang();
 
   useEffect(() => {
     setMounted(true);
-    const seen = sessionStorage.getItem("pc-preloader");
-    if (seen) return;
+    try {
+      if (sessionStorage.getItem("pc-preloader")) return;
+    } catch {}
 
     setShow(true);
     const timer = setTimeout(() => {
       setShow(false);
-      sessionStorage.setItem("pc-preloader", "1");
+      try { sessionStorage.setItem("pc-preloader", "1"); } catch {}
     }, 1800);
     return () => clearTimeout(timer);
   }, []);
@@ -36,7 +39,7 @@ export default function Preloader() {
           <div className="flex flex-col items-center gap-6">
             {/* Monogram */}
             <motion.div
-              className="font-akira select-none"
+              className="font-display select-none"
               style={{
                 fontSize:      "clamp(5rem, 15vw, 9rem)",
                 color:         "#f7f5f1",
@@ -71,7 +74,7 @@ export default function Preloader() {
               animate={{ opacity: 1 }}
               transition={{ delay: 0.5, duration: 0.6 }}
             >
-              Portfolio
+              {t.preloader}
             </motion.p>
           </div>
         </motion.div>

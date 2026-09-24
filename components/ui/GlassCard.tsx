@@ -4,6 +4,8 @@ import Image from "next/image";
 import { useState } from "react";
 import { motion } from "framer-motion";
 import type { WorkItem } from "@/lib/constants";
+import { useLang } from "@/lib/i18n";
+import { useMediaQuery } from "@/lib/use-media-query";
 
 export type Work = WorkItem;
 
@@ -16,6 +18,9 @@ interface GlassCardProps {
 
 export default function GlassCard({ work, gradient, accentColor, onClick }: GlassCardProps) {
   const [hovered, setHovered] = useState(false);
+  const { lang, t, tag: tagLabel } = useLang();
+  const isTouch = useMediaQuery("(hover: none)");
+  const revealed = hovered || isTouch;
 
   const cover = work.files[0];
   const hasCover = Boolean(cover);
@@ -88,7 +93,7 @@ export default function GlassCard({ work, gradient, accentColor, onClick }: Glas
               border:               "1px solid rgba(247,245,241,0.15)",
             }}
           >
-            {work.files.length} pieces
+            {work.files.length} {t.work.pieces}
           </div>
         )}
 
@@ -127,7 +132,7 @@ export default function GlassCard({ work, gradient, accentColor, onClick }: Glas
                     border:     "1px solid rgba(247,245,241,0.1)",
                   }}
                 >
-                  {tag}
+                  {tagLabel(tag)}
                 </span>
               ))}
             </div>
@@ -144,7 +149,7 @@ export default function GlassCard({ work, gradient, accentColor, onClick }: Glas
 
         <motion.div
           initial={{ y: "100%", opacity: 0 }}
-          animate={{ y: hovered ? "0%" : "100%", opacity: hovered ? 1 : 0 }}
+          animate={{ y: revealed ? "0%" : "100%", opacity: revealed ? 1 : 0 }}
           transition={{ duration: 0.35, ease: [0.32, 0.72, 0, 1] }}
           className="px-5 pb-4"
         >
@@ -152,13 +157,13 @@ export default function GlassCard({ work, gradient, accentColor, onClick }: Glas
             className="text-xs leading-relaxed"
             style={{ color: "rgba(247,245,241,0.5)" }}
           >
-            {work.description}
+            {work.description[lang]}
           </p>
           <span
             className="inline-block mt-2 text-xs font-medium uppercase tracking-wider"
             style={{ color: accentColor }}
           >
-            View project →
+            {t.work.viewProject}
           </span>
         </motion.div>
       </div>

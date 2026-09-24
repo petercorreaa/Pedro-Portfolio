@@ -5,6 +5,7 @@ const config: Config = {
     "./pages/**/*.{js,ts,jsx,tsx,mdx}",
     "./components/**/*.{js,ts,jsx,tsx,mdx}",
     "./app/**/*.{js,ts,jsx,tsx,mdx}",
+    "./lib/**/*.{js,ts,jsx,tsx}",
     "./styles/**/*.css",
   ],
   theme: {
@@ -25,8 +26,7 @@ const config: Config = {
         },
       },
       fontFamily: {
-        display: ["AkiraExpanded", "sans-serif"],
-        sans:    ["Helvetica Neue", "Helvetica", "Arial", "sans-serif"],
+        sans:    ["var(--font-space-grotesk)", "sans-serif"],
       },
       backgroundImage: {
         "gradient-branding": "linear-gradient(to bottom, #0d0907, #1a4d2e)",

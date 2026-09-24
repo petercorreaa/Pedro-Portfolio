@@ -8,16 +8,16 @@ import StickyFooter from "@/components/ui/sticky-footer";
 export default function Home() {
   return (
     <main className="min-h-screen">
-      <div style={{ marginBottom: "120px" }}>
+      <div className="mb-20 md:mb-[120px]">
         <HeroSection />
       </div>
-      <div style={{ marginBottom: "120px" }}>
+      <div className="mb-20 md:mb-[120px]">
         <MarqueeSection />
       </div>
-      <div id="sections" style={{ marginBottom: "120px" }}>
+      <div id="sections" className="mb-20 md:mb-[120px] scroll-mt-24 lg:scroll-mt-0">
         <SectionsGrid />
       </div>
-      <div style={{ marginBottom: "120px" }}>
+      <div className="mb-20 md:mb-[120px]">
         <MusicSection />
       </div>
       <ContactSection />

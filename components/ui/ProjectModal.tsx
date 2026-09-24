@@ -4,6 +4,7 @@ import Image from "next/image";
 import { useCallback, useEffect, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import type { WorkItem } from "@/lib/constants";
+import { useLang } from "@/lib/i18n";
 
 interface ProjectModalProps {
   work:        WorkItem | null;
@@ -21,6 +22,7 @@ const glassBtn: React.CSSProperties = {
 
 export default function ProjectModal({ work, accentColor, onClose }: ProjectModalProps) {
   const [index, setIndex] = useState(0);
+  const { lang, t, tag: tagLabel } = useLang();
 
   const total = work?.files.length ?? 0;
 
@@ -83,9 +85,9 @@ export default function ProjectModal({ work, accentColor, onClose }: ProjectModa
             {/* ── Fixed close button ────────────────────────── */}
             <button
               onClick={onClose}
-              aria-label="Close"
-              className="pointer-events-auto fixed w-10 h-10 rounded-full flex items-center justify-center transition-colors"
-              style={{ ...glassBtn, top: '110px', right: '24px', zIndex: 999 }}
+              aria-label={t.work.close}
+              className="pointer-events-auto fixed top-[84px] right-4 md:top-[110px] md:right-6 w-11 h-11 md:w-10 md:h-10 rounded-full flex items-center justify-center transition-colors"
+              style={{ ...glassBtn, zIndex: 999 }}
             >
               <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
                 <path d="M1 1l12 12M13 1L1 13" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/>
@@ -93,7 +95,7 @@ export default function ProjectModal({ work, accentColor, onClose }: ProjectModa
             </button>
 
             {/* ── Tags + title ──────────────────────────────── */}
-            <div className="pointer-events-auto px-5 md:px-10" style={{ paddingTop: '180px', paddingBottom: '20px' }}>
+            <div className="pointer-events-auto px-5 pr-16 pt-[92px] pb-4 md:px-10 md:pt-[180px] md:pb-5">
               <div className="flex flex-wrap gap-1.5 mb-2">
                 {work.tags.map((tag) => (
                   <span
@@ -105,12 +107,12 @@ export default function ProjectModal({ work, accentColor, onClose }: ProjectModa
                       border:     `1px solid ${accentColor}35`,
                     }}
                   >
-                    {tag}
+                    {tagLabel(tag)}
                   </span>
                 ))}
               </div>
               <h2
-                className="font-akira text-xl md:text-2xl truncate"
+                className="font-display text-2xl md:text-3xl truncate"
                 style={{ color: "#f7f5f1" }}
               >
                 {work.title}
@@ -130,7 +132,6 @@ export default function ProjectModal({ work, accentColor, onClose }: ProjectModa
                     background:     'rgba(255,255,255,0.05)',
                     backdropFilter: 'blur(12px)',
                     color:          '#f7f5f1',
-                    fontFamily:     'Helvetica Neue, Helvetica, Arial, sans-serif',
                     fontSize:       '12px',
                     letterSpacing:  '0.15em',
                     textTransform:  'uppercase',
@@ -139,13 +140,13 @@ export default function ProjectModal({ work, accentColor, onClose }: ProjectModa
                     transition:     'all 0.3s ease',
                   }}
                 >
-                  Visit Website →
+                  {t.work.visitSite}
                 </a>
               )}
             </div>
 
             <div
-              className="relative flex-1 min-h-0 flex items-center justify-center px-5 md:px-20 pointer-events-none"
+              className="relative flex-1 min-h-0 flex items-center justify-center px-3 md:px-20 pointer-events-none"
             >
               <AnimatePresence mode="wait">
                 <motion.div
@@ -155,6 +156,13 @@ export default function ProjectModal({ work, accentColor, onClose }: ProjectModa
                   animate={{ opacity: 1, scale: 1 }}
                   exit={{    opacity: 0, scale: 0.98 }}
                   transition={{ duration: 0.3, ease: [0.32, 0.72, 0, 1] }}
+                  drag={total > 1 && current.type === "image" ? "x" : false}
+                  dragConstraints={{ left: 0, right: 0 }}
+                  dragElastic={0.25}
+                  onDragEnd={(_, info) => {
+                    if (info.offset.x < -60) next();
+                    else if (info.offset.x > 60) prev();
+                  }}
                 >
                   {current.type === "image" ? (
                     <div className="relative w-full h-full">
@@ -164,6 +172,7 @@ export default function ProjectModal({ work, accentColor, onClose }: ProjectModa
                         fill
                         sizes="100vw"
                         style={{ objectFit: "contain" }}
+                        draggable={false}
                         priority
                       />
                     </div>
@@ -185,16 +194,16 @@ export default function ProjectModal({ work, accentColor, onClose }: ProjectModa
                 <>
                   <button
                     onClick={prev}
-                    aria-label="Previous"
-                    className="pointer-events-auto absolute left-3 md:left-6 top-1/2 -translate-y-1/2 w-11 h-11 rounded-full flex items-center justify-center"
+                    aria-label={t.work.prev}
+                    className="pointer-events-auto absolute left-2 md:left-6 top-1/2 -translate-y-1/2 w-11 h-11 rounded-full flex items-center justify-center"
                     style={glassBtn}
                   >
                     ←
                   </button>
                   <button
                     onClick={next}
-                    aria-label="Next"
-                    className="pointer-events-auto absolute right-3 md:right-6 top-1/2 -translate-y-1/2 w-11 h-11 rounded-full flex items-center justify-center"
+                    aria-label={t.work.next}
+                    className="pointer-events-auto absolute right-2 md:right-6 top-1/2 -translate-y-1/2 w-11 h-11 rounded-full flex items-center justify-center"
                     style={glassBtn}
                   >
                     →
@@ -203,12 +212,12 @@ export default function ProjectModal({ work, accentColor, onClose }: ProjectModa
               )}
             </div>
 
-            <div className="pointer-events-auto px-5 md:px-10 py-5">
+            <div className="pointer-events-auto px-5 md:px-10 py-4 md:py-5" style={{ paddingBottom: "max(16px, env(safe-area-inset-bottom))" }}>
               <p
                 className="text-sm md:text-base leading-relaxed mb-4 max-w-3xl"
                 style={{ color: "rgba(247,245,241,0.65)" }}
               >
-                {work.description}
+                {work.description[lang]}
               </p>
 
               {total > 1 && (
@@ -224,7 +233,7 @@ export default function ProjectModal({ work, accentColor, onClose }: ProjectModa
                       <button
                         key={i}
                         onClick={() => setIndex(i)}
-                        aria-label={`Go to ${i + 1}`}
+                        aria-label={`${t.work.goTo} ${i + 1}`}
                         className="rounded-full transition-all duration-300 flex-shrink-0"
                         style={{
                           width:      i === index ? 24 : 6,

@@ -7,6 +7,7 @@ import MagneticButton from "@/components/ui/MagneticButton";
 import GlassCard from "@/components/ui/GlassCard";
 import ProjectModal from "@/components/ui/ProjectModal";
 import type { WorkItem } from "@/lib/constants";
+import { useLang } from "@/lib/i18n";
 
 interface SectionPageTemplateProps {
   title:       string;
@@ -22,16 +23,17 @@ export default function SectionPageTemplate({
   works,
 }: SectionPageTemplateProps) {
   const router = useRouter();
+  const { t } = useLang();
   const [selectedWork, setSelectedWork] = useState<WorkItem | null>(null);
   const [mounted,      setMounted]      = useState(false);
   useEffect(() => { setMounted(true); }, []);
 
   return (
     <>
-      <main className="relative min-h-screen" style={{ background: gradient, paddingTop: '120px' }}>
+      <main className="relative min-h-screen pt-[120px] md:pt-[140px]" style={{ background: gradient }}>
 
         {/* ── Fixed back button ─────────────────────────────── */}
-        <MagneticButton strength={0.3} className="fixed top-[110px] left-6 z-[999]">
+        <MagneticButton strength={0.3} className="fixed top-[84px] left-4 md:top-[128px] md:left-6 z-30">
           <button
             onClick={() => router.push('/#sections')}
             className="flex items-center gap-2 px-4 py-2 rounded-full text-sm transition-colors duration-300"
@@ -49,12 +51,12 @@ export default function SectionPageTemplate({
             <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
               <path d="M12 7H2M2 7l5-5M2 7l5 5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
             </svg>
-            Back
+            {t.work.back}
           </button>
         </MagneticButton>
 
         {/* ── Hero area ─────────────────────────────────────── */}
-        <div className="pt-10 pb-20 px-6 md:px-16 max-w-7xl mx-auto">
+        <div className="pt-6 md:pt-10 pb-20 px-4 md:px-16 max-w-7xl mx-auto">
           <motion.p
             className="text-xs uppercase tracking-[0.25em] mb-6"
             style={{ color: accentColor }}
@@ -62,14 +64,14 @@ export default function SectionPageTemplate({
             animate={mounted ? { opacity: 1 } : { opacity: 0 }}
             transition={{ duration: 0.7, delay: 0.1 }}
           >
-            Portfolio
+            {t.work.eyebrow}
           </motion.p>
 
-          <div className="overflow-hidden mb-16">
+          <div className="overflow-hidden mb-10 md:mb-16">
             {title.split(" ").map((word, i) => (
               <div key={word} className="overflow-hidden">
                 <motion.h1
-                  className="font-akira leading-none"
+                  className="font-display leading-none"
                   style={{
                     fontSize: "clamp(2.2rem, 7vw, 7rem)",
                     color:    "#f7f5f1",
@@ -101,7 +103,7 @@ export default function SectionPageTemplate({
                 color:                "rgba(247,245,241,0.55)",
               }}
             >
-              <p className="text-sm">Coming soon — projects in development.</p>
+              <p className="text-sm">{t.work.comingSoon}</p>
             </div>
           ) : (
           <div

@@ -2,11 +2,15 @@
 
 [data-cursor="work"] { cursor: none; }
 
+html { -webkit-text-size-adjust: 100%; }
+button, a { -webkit-tap-highlight-color: transparent; }
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
 /* ── Fonts ─────────────────────────────────────────────────── */
+/* Akira is used only for the hero name; the rest of the site is Space Grotesk */
 @font-face {
   font-family: "AkiraExpanded";
   src: url("/fonts/AkiraExpanded.otf") format("opentype");
@@ -46,14 +50,14 @@
     padding: 0;
     background-color: #0d0907;
     color: var(--text-primary);
-    font-family: "Helvetica Neue", "Helvetica", Arial, sans-serif;
+    font-family: var(--font-space-grotesk), sans-serif;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
     overflow-x: hidden;
   }
 
   h1, h2, h3, h4, h5, h6 {
-    font-family: "AkiraExpanded", sans-serif;
+    font-family: inherit;
   }
 
   ::selection {
@@ -111,6 +115,15 @@
   .nav-link--active::after {
     transform: scaleX(1);
   }
+
+  /* Larger tap targets inside the mobile menu */
+  .nav-link--menu {
+    font-size: 0.8125rem;
+    padding: 10px 0 !important;
+  }
+  .nav-link--menu::after {
+    bottom: 6px;
+  }
 }
 
 /* ── Keyframes ─────────────────────────────────────────────── */
@@ -122,6 +135,11 @@
 @keyframes glow-pulse {
   0%, 100% { box-shadow: 0 0 1px 0px rgba(232, 224, 245, 0.4); }
   50%       { box-shadow: 0 0 8px 1px rgba(232, 224, 245, 0.4); }
+}
+
+@keyframes gooey-marquee {
+  from { transform: translateX(0); }
+  to   { transform: translateX(-50%); }
 }
 
 @keyframes chevron-bounce {
@@ -196,14 +214,17 @@
     grid-template-columns: 1fr 1fr !important;
     gap: 32px !important;
   }
-  .footer-grid > :first-child {
+  .footer-grid > :first-child,
+  .footer-grid > :last-child {
     grid-column: 1 / -1;
   }
 }
-@media (max-width: 480px) {
-  .footer-grid {
-    grid-template-columns: 1fr !important;
-  }
+
+/* ── Touch devices: no custom cursor ───────────────────────── */
+@media (hover: none), (pointer: coarse) {
+  .custom-cursor { display: none !important; }
+  [data-cursor="work"],
+  [data-cursor="work"] a { cursor: pointer !important; }
 }
 
 /* ── Utilities ─────────────────────────────────────────────── */
@@ -219,6 +240,14 @@
     border: 1px solid rgba(247, 245, 241, 0.08);
   }
 
+  .font-display {
+    font-family: var(--font-space-grotesk), sans-serif;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: -0.01em;
+  }
+
+  /* Akira is used only for the hero name, the navbar wordmark, and the footer monogram */
   .font-akira {
     font-family: "AkiraExpanded", sans-serif;
   }

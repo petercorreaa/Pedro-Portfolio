@@ -1,9 +1,11 @@
 "use client"
 import { useEffect, useState } from "react"
 import { motion, useMotionValue, useSpring } from "framer-motion"
+import { useLang } from "@/lib/i18n"
 
 export default function CustomCursor() {
   const [hovering, setHovering] = useState(false)
+  const { t } = useLang()
   const x = useMotionValue(0)
   const y = useMotionValue(0)
   const springX = useSpring(x, { stiffness: 200, damping: 25 })
@@ -35,6 +37,7 @@ export default function CustomCursor() {
 
   return (
     <motion.div
+      className="custom-cursor"
       style={{
         position: 'fixed',
         left: springX,
@@ -83,11 +86,10 @@ export default function CustomCursor() {
                 style={{
                   fontSize: '10px',
                   fill: 'rgba(247,245,241,0.7)',
-                  fontFamily: 'Helvetica Neue, Helvetica, Arial, sans-serif',
-                }}
+                  }}
               >
                 <textPath href="#cursorCircle" startOffset="0%">
-                  {'SEE MY WORK'}
+                  {t.cursor}
                 </textPath>
               </motion.text>
             </svg>

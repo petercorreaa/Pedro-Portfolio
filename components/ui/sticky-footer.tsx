@@ -1,18 +1,9 @@
 "use client";
 
 import Link from "next/link";
+import { useLang } from "@/lib/i18n";
 
 /* ── Social icon SVGs (brand icons not in lucide-react) ──────── */
-function IconInstagram({ size = 18 }: { size?: number }) {
-  return (
-    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
-      <rect x="2" y="2" width="20" height="20" rx="5" ry="5"/>
-      <circle cx="12" cy="12" r="4"/>
-      <circle cx="17.5" cy="6.5" r="0.5" fill="currentColor" stroke="none"/>
-    </svg>
-  );
-}
-
 function IconLinkedin({ size = 18 }: { size?: number }) {
   return (
     <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
@@ -24,35 +15,25 @@ function IconLinkedin({ size = 18 }: { size?: number }) {
 }
 
 /* ── Link data ───────────────────────────────────────────────── */
-const footerLinkGroups = [
-  {
-    label: "Work",
-    links: [
-      { title: "Branding", href: "/branding" },
-      { title: "Visual",   href: "/visual"   },
-      { title: "Social",   href: "/social"   },
-      { title: "UX/UI",    href: "/uxui"     },
-    ],
-  },
-  {
-    label: "Contact",
-    links: [
-      { title: "Instagram", href: "https://instagram.com/petercorreaa"      },
-      { title: "LinkedIn",  href: "https://linkedin.com/in/petercorreaa"    },
-      { title: "Email",     href: "mailto:hello@pedrocorrea.com"            },
-    ],
-  },
+const LINKEDIN_URL = "https://www.linkedin.com/in/pedro-a-correa/";
+const EMAIL_URL    = "mailto:petercorrea516@gmail.com";
+
+const workLinks = [
+  { title: "Branding", href: "/branding" },
+  { title: "Visual",   href: "/visual"   },
+  { title: "Social",   href: "/social"   },
+  { title: "UX/UI",    href: "/uxui"     },
+];
+
+const contactLinks = [
+  { title: "LinkedIn", href: LINKEDIN_URL },
+  { title: "Email",    href: EMAIL_URL    },
 ];
 
 const socialLinks = [
   {
-    icon:  IconInstagram,
-    href:  "https://instagram.com/petercorreaa",
-    label: "Instagram",
-  },
-  {
     icon:  IconLinkedin,
-    href:  "https://linkedin.com/in/petercorreaa",
+    href:  LINKEDIN_URL,
     label: "LinkedIn",
   },
 ];
@@ -64,6 +45,12 @@ const border = "rgba(247,245,241,0.1)";
 
 /* ── Component ───────────────────────────────────────────────── */
 export default function StickyFooter() {
+  const { t } = useLang();
+  const footerLinkGroups = [
+    { label: t.footer.work,    links: workLinks    },
+    { label: t.footer.contact, links: contactLinks },
+  ];
+
   return (
     <footer
       style={{
@@ -77,8 +64,8 @@ export default function StickyFooter() {
           background:    "transparent",
           maxWidth:      "1200px",
           margin:        "0 auto",
-          padding:       "48px 32px 32px",
         }}
+        className="px-5 pt-12 pb-8 md:px-8"
       >
         {/* ── Top row: brand + link groups + socials ── */}
         <div
@@ -95,10 +82,10 @@ export default function StickyFooter() {
           <div style={{ maxWidth: "280px" }}>
             <div style={{ marginBottom: "16px" }}>
               <span
+                className="font-akira"
                 style={{
-                  fontFamily: "AkiraExpanded, sans-serif",
-                  fontSize:   "1.2rem",
-                  color:       full,
+                  fontSize: "1.2rem",
+                  color:     full,
                 }}
               >
                 PC
@@ -111,8 +98,7 @@ export default function StickyFooter() {
                 lineHeight:  1.65,
               }}
             >
-              Designer &amp; Creative Director crafting brand identities, visual
-              systems and digital experiences.
+              {t.footer.tagline}
             </p>
           </div>
 
@@ -179,9 +165,11 @@ export default function StickyFooter() {
               fontSize:      "0.6875rem",
               textTransform: "uppercase",
               letterSpacing: "0.1em",
+              textAlign:     "center",
+              lineHeight:    1.6,
             }}
           >
-            © 2025 Pedro Correa. All rights reserved.
+            © {new Date().getFullYear()} Pedro Correa. {t.footer.rights}
           </p>
         </div>
       </div>
