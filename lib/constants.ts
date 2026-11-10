@@ -80,6 +80,30 @@ const vid = (src: string): MediaFile => ({ type: "video", src });
 export const WORK: Record<"branding" | "visual" | "social" | "uxui", WorkItem[]> = {
   branding: [
     {
+      id:          "shyfts",
+      title:       "SHYFTS",
+      tags:        ["Brand Identity", "Motion Graphics", "Sports Tech"],
+      description: {
+        en: "Brand identity for Shyfts, an Argentine platform for booking sports courts quickly and easily. A professional, trustworthy, and dynamic identity that blends technology and sport.",
+        es: "Identidad de marca para Shyfts, una plataforma argentina para reservar canchas deportivas de forma fácil y rápida. Una identidad profesional, confiable y dinámica que fusiona tecnología y deporte.",
+      },
+      files: [
+        vid("/work/branding/shyfts/shyfts-branding.mp4"),
+      ],
+    },
+    {
+      id:          "malvec-studio",
+      title:       "MALVEC STUDIO",
+      tags:        ["Brand Identity", "Motion Graphics"],
+      description: {
+        en: "Brand identity for Malvec Studio presented through motion graphics. Logo, typography, and color brought to life in an animated piece.",
+        es: "Identidad de marca para Malvec Studio presentada a través de motion graphics. Logo, tipografía y color cobran vida en una pieza animada.",
+      },
+      files: [
+        vid("/work/branding/malvec-studio/malvec-branding.mp4"),
+      ],
+    },
+    {
       id:          "nadal-frola",
       title:       "Nadal | Frola",
       tags:        ["Brand Identity", "Motion", "Art Direction"],
