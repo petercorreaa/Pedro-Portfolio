@@ -84,8 +84,8 @@ export const WORK: Record<"branding" | "visual" | "social" | "uxui", WorkItem[]>
       title:       "SHYFTS",
       tags:        ["Brand Identity", "Motion Graphics", "Sports Tech"],
       description: {
-        en: "Brand identity for Shyfts, an Argentine platform for booking sports courts quickly and easily. A professional, trustworthy, and dynamic identity that blends technology and sport.",
-        es: "Identidad de marca para Shyfts, una plataforma argentina para reservar canchas deportivas de forma fácil y rápida. Una identidad profesional, confiable y dinámica que fusiona tecnología y deporte.",
+        en: "Brand identity for Shyfts, an Argentine platform for booking sports courts fast and easy. Professional, trustworthy, and dynamic: tech and sport in one brand.",
+        es: "Identidad de marca para Shyfts, plataforma argentina para reservar canchas de forma fácil y rápida. Profesional, confiable y dinámica: tecnología y deporte en una marca.",
       },
       files: [
         vid("/work/branding/shyfts/shyfts-branding.mp4"),

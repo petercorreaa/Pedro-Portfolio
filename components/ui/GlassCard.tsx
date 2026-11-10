@@ -47,6 +47,9 @@ export default function GlassCard({ work, gradient, accentColor, onClick }: Glas
         cursor:                "pointer",
         overflow:              "hidden",
         position:              "relative",
+        height:                "100%",
+        display:               "flex",
+        flexDirection:         "column",
       }}
     >
       <div className="relative overflow-hidden" style={{ aspectRatio: "4/3" }}>
@@ -112,20 +115,20 @@ export default function GlassCard({ work, gradient, accentColor, onClick }: Glas
         />
       </div>
 
-      <div className="relative overflow-hidden">
+      <div className="relative overflow-hidden flex-1">
         <div className="px-5 py-4 flex items-start justify-between gap-3">
-          <div>
+          <div className="min-w-0">
             <h3
-              className="text-base leading-snug font-medium"
+              className="text-base leading-snug font-medium truncate"
               style={{ color: "#f7f5f1" }}
             >
               {work.title}
             </h3>
-            <div className="flex flex-wrap gap-1.5 mt-2">
-              {work.tags.map((tag) => (
+            <div className="flex flex-nowrap overflow-hidden gap-1.5 mt-2">
+              {work.tags.slice(0, 2).map((tag) => (
                 <span
                   key={tag}
-                  className="text-[10px] uppercase tracking-wider px-2 py-0.5 rounded-full"
+                  className="text-[10px] uppercase tracking-wider px-2 py-0.5 rounded-full whitespace-nowrap flex-shrink-0"
                   style={{
                     background: "rgba(247,245,241,0.08)",
                     color:      "rgba(247,245,241,0.5)",
@@ -154,8 +157,8 @@ export default function GlassCard({ work, gradient, accentColor, onClick }: Glas
           className="px-5 pb-4"
         >
           <p
-            className="text-xs leading-relaxed"
-            style={{ color: "rgba(247,245,241,0.5)" }}
+            className="text-xs leading-relaxed line-clamp-4"
+            style={{ color: "rgba(247,245,241,0.5)", height: "6.5em" }}
           >
             {work.description[lang]}
           </p>
